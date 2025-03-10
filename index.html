@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Flow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .subtask-container {
+            margin-top: 10px;
+        }
+        .subtask {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .subtask input {
+            margin-right: 10px;
+        }
+        .remove-subtask {
+            cursor: pointer;
+            color: red;
+            margin-left: 10px;
+        }
+        .create-task-button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .create-task-button:hover {
+            background-color: darkgreen;
+        }
+        .task-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .task-card h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        .task-card h3 input {
+            margin-right: 10px;
+        }
+        .task-card ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .task-card ul li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .task-card ul li input {
+            margin-right: 10px;
+        }
+        .delete-task {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .delete-task:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <h1>Focus Flow</h1>
+    <label for="tarefa">Tarefa</label>
+    <input type="text" id="tarefa" placeholder="Nome da tarefa">
+    <button id="add-subtask">Adicionar Subtarefa</button>
+
+    <div id="subtasks-container" class="subtask-container"></div>
+
+    <button id="create-task" class="create-task-button">Criar Tarefa</button>
+
+    <div id="tasks-list"></div>
+
+    <script>
+        // Função para carregar tarefas do LocalStorage
+        function carregarTarefas() {
+            const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+            const tasksList = document.getElementById('tasks-list');
+            tasksList.innerHTML = ''; // Limpa a lista antes de carregar
+
+            tarefas.forEach((tarefa, index) => {
+                const taskCard = document.createElement('div');
+                taskCard.classList.add('task-card');
+
+                // Título da tarefa principal
+                const taskTitle = document.createElement('h3');
+                const taskCheckbox = document.createElement('input');
+                taskCheckbox.type = 'checkbox';
+                taskTitle.appendChild(taskCheckbox);
+                taskTitle.appendChild(document.createTextNode(tarefa.tarefa));
+                taskCard.appendChild(taskTitle);
+
+                // Lista de subtarefas
+                if (tarefa.subtarefas && tarefa.subtarefas.length > 0) {
+                    const subtaskList = document.createElement('ul');
+                    tarefa.subtarefas.forEach(subtarefa => {
+                        const subtaskItem = document.createElement('li');
+                        const subtaskCheckbox = document.createElement('input');
+                        subtaskCheckbox.type = 'checkbox';
+                        subtaskItem.appendChild(subtaskCheckbox);
+                        subtaskItem.appendChild(document.createTextNode(subtarefa));
+                        subtaskList.appendChild(subtaskItem);
+                    });
+                    taskCard.appendChild(subtaskList);
+                }
+
+                // Botão para excluir a tarefa
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('delete-task');
+                deleteButton.textContent = 'Excluir Tarefa';
+                deleteButton.addEventListener('click', () => {
+                    tarefas.splice(index, 1); // Remove a tarefa do array
+                    localStorage.setItem('tarefas', JSON.stringify(tarefas)); // Atualiza o LocalStorage
+                    carregarTarefas(); // Recarrega a lista de tarefas
+                });
+                taskCard.appendChild(deleteButton);
+
+                tasksList.appendChild(taskCard);
+            });
+        }
+
+        // Função para adicionar subtarefas dinamicamente
+        document.getElementById('add-subtask').addEventListener('click', () => {
+            const subtasksContainer = document.getElementById('subtasks-container');
+
+            const subtaskDiv = document.createElement('div');
+            subtaskDiv.classList.add('subtask');
+
+            const subtaskInput = document.createElement('input');
+            subtaskInput.type = 'text';
+            subtaskInput.placeholder = 'Subtarefa';
+
+            const removeButton = document.createElement('span');
+            removeButton.classList.add('remove-subtask');
+            removeButton.innerHTML = 'X';
+            removeButton.addEventListener('click', () => {
+                subtasksContainer.removeChild(subtaskDiv);
+            });
+
+            subtaskDiv.appendChild(subtaskInput);
+            subtaskDiv.appendChild(removeButton);
+
+            subtasksContainer.appendChild(subtaskDiv);
+        });
+
+        // Função para criar uma nova tarefa
+        document.getElementById('create-task').addEventListener('click', () => {
+            const tarefaInput = document.getElementById('tarefa');
+            const tarefaText = tarefaInput.value.trim();
+
+            if (!tarefaText) {
+                alert('Por favor, insira um nome para a tarefa principal.');
+                return;
+            }
+
+            const subtaskInputs = document.querySelectorAll('#subtasks-container .subtask input');
+            const subtarefas = Array.from(subtaskInputs).map(input => input.value.trim()).filter(text => text);
+
+            // Salva a tarefa no LocalStorage
+            const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+            tarefas.push({ tarefa: tarefaText, subtarefas });
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+
+            // Limpa os campos e recarrega a lista de tarefas
+            tarefaInput.value = '';
+            document.getElementById('subtasks-container').innerHTML = '';
+            carregarTarefas();
+        });
+
+        // Carrega as tarefas ao iniciar a página
+        carregarTarefas();
+    </script>
+</body>
+</html>
