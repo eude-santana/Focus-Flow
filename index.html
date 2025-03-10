@@ -5,86 +5,186 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Focus Flow</title>
     <style>
+        /* Estilos globais */
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
+
+        h1 {
+            color: #4a90e2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Container do formulário */
+        #form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        /* Botões */
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #add-subtask {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        #add-subtask:hover {
+            background-color: #357abd;
+        }
+
+        #create-task {
+            background-color: #50c878;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        #create-task:hover {
+            background-color: #3da566;
+        }
+
+        /* Subtarefas */
         .subtask-container {
             margin-top: 10px;
         }
+
         .subtask {
             display: flex;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
+
         .subtask input {
+            flex: 1;
             margin-right: 10px;
         }
+
         .remove-subtask {
             cursor: pointer;
-            color: red;
-            margin-left: 10px;
+            color: #ff4d4d;
+            font-size: 18px;
+            transition: color 0.3s ease;
         }
-        .create-task-button {
-            margin-top: 10px;
-            padding: 5px 10px;
-            background-color: green;
-            color: white;
-            border: none;
-            cursor: pointer;
+
+        .remove-subtask:hover {
+            color: #cc0000;
         }
-        .create-task-button:hover {
-            background-color: darkgreen;
+
+        /* Cards de tarefas */
+        #tasks-list {
+            margin-top: 20px;
         }
+
         .task-card {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
         .task-card h3 {
             margin: 0;
             display: flex;
             align-items: center;
+            font-size: 18px;
+            color: #4a90e2;
         }
+
         .task-card h3 input {
             margin-right: 10px;
         }
+
         .task-card ul {
             list-style-type: none;
             padding: 0;
+            margin: 10px 0 0 0;
         }
+
         .task-card ul li {
             display: flex;
             align-items: center;
             margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
         }
+
         .task-card ul li input {
             margin-right: 10px;
         }
+
         .delete-task {
-            background-color: red;
+            background-color: #ff4d4d;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 8px 15px;
+            border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
+            transition: background-color 0.3s ease;
         }
+
         .delete-task:hover {
-            background-color: darkred;
+            background-color: #cc0000;
         }
     </style>
 </head>
 <body>
     <h1>Focus Flow</h1>
-    <label for="tarefa">Tarefa</label>
-    <input type="text" id="tarefa" placeholder="Nome da tarefa">
-    <button id="add-subtask">Adicionar Subtarefa</button>
+    <div id="form-container">
+        <label for="tarefa">Tarefa</label>
+        <input type="text" id="tarefa" placeholder="Nome da tarefa">
+        <button id="add-subtask">Adicionar Subtarefa</button>
 
-    <div id="subtasks-container" class="subtask-container"></div>
+        <div id="subtasks-container" class="subtask-container"></div>
 
-    <button id="create-task" class="create-task-button">Criar Tarefa</button>
+        <button id="create-task" class="create-task-button">Criar Tarefa</button>
+    </div>
 
     <div id="tasks-list"></div>
 
